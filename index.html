@@ -109,12 +109,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 15px var(--shadow-light);
         }
-        .social-login-btn.microsoft:hover {
-            background-color: #f0f0f0;
-            border-color: #c5c5c5;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px var(--shadow-light);
-        }
+        /* Removido .social-login-btn.microsoft:hover */
 
         .error-message {
             color: var(--danger-color);
@@ -299,14 +294,12 @@
         <!-- Tela de Login -->
         <div id="login-screen">
             <h1>Bem-vindo ao Portal de Dashboards</h1>
-            <p>Faça login para acessar os relatórios de Power BI.</p>
+            <p>Faça login com sua conta Google para acessar os relatórios de Power BI.</p>
             <div class="login-options">
                 <button id="google-login-btn" class="social-login-btn google">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Entrar com Google
                 </button>
-                <button id="microsoft-login-btn" class="social-login-btn microsoft">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/microsoft.svg" alt="Microsoft"> Entrar com Microsoft
-                </button>
+                <!-- Botão Microsoft removido -->
             </div>
             <div class="error-message" id="login-error"></div>
         </div>
@@ -338,7 +331,7 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, MicrosoftAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -355,24 +348,22 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app); // Obter a instância de autenticação
 
-        // Provedores de Autenticação
+        // Provedor de Autenticação Google
         const googleProvider = new GoogleAuthProvider();
-        const microsoftProvider = new MicrosoftAuthProvider();
-        // Você pode adicionar scopes específicos se precisar de mais informações do usuário
-        // microsoftProvider.addScope('user.read'); 
+        // Provedor Microsoft removido
 
         document.addEventListener('DOMContentLoaded', () => {
             const loginScreen = document.getElementById('login-screen');
             const dashboardContent = document.getElementById('dashboard-content');
             const googleLoginBtn = document.getElementById('google-login-btn');
-            const microsoftLoginBtn = document.getElementById('microsoft-login-btn');
+            // const microsoftLoginBtn = document.getElementById('microsoft-login-btn'); // Removido
             const logoutBtn = document.getElementById('logout-btn');
             const loginError = document.getElementById('login-error');
             const userDisplay = document.getElementById('user-display');
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
-            // --- Funções de Login ---
+            // --- Função de Login ---
             const handleLogin = async (provider) => {
                 try {
                     const result = await signInWithPopup(auth, provider);
@@ -396,7 +387,7 @@
             };
 
             googleLoginBtn.addEventListener('click', () => handleLogin(googleProvider));
-            microsoftLoginBtn.addEventListener('click', () => handleLogin(microsoftProvider));
+            // microsoftLoginBtn.addEventListener('click', () => handleLogin(microsoftProvider)); // Removido
 
             // --- Função de Logout ---
             logoutBtn.addEventListener('click', async () => {
