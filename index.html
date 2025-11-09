@@ -8,14 +8,15 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3b82f6; /* Azul vibrante */
-            --secondary-color: #2563eb; /* Azul mais escuro */
+            --primary-color: #007bff; /* Azul primário profissional */
+            --secondary-color: #0056b3; /* Azul mais escuro para hover/active */
             --background-light: #f8f9fa; /* Fundo muito claro */
-            --background-dark: #e9ecef; /* Fundo um pouco mais escuro */
-            --text-dark: #212529; /* Texto escuro */
-            --text-muted: #6c757d; /* Texto cinza */
+            --background-dark: #e9ecef; /* Fundo um pouco mais escuro para nav */
+            --text-dark: #343a40; /* Texto escuro padrão */
+            --text-muted: #6c757d; /* Texto cinza sutil */
             --border-color: #dee2e6; /* Cor da borda */
-            --card-bg: #ffffff; /* Fundo dos cartões */
+            --card-bg: #ffffff; /* Fundo dos cartões/conteúdo */
+            --danger-color: #dc3545; /* Cor para mensagens de erro */
             --shadow-light: rgba(0, 0, 0, 0.08);
             --shadow-medium: rgba(0, 0, 0, 0.15);
         }
@@ -29,21 +30,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden; /* Evita scroll horizontal */
+            min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+            overflow-x: hidden; /* Evita scroll horizontal indesejado */
         }
 
         .container {
             background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 20px var(--shadow-light);
+            box-shadow: 0 8px 25px var(--shadow-medium); /* Sombra mais pronunciada */
             width: 100%;
-            max-width: 1200px;
-            margin: 20px;
+            max-width: 1300px; /* Aumenta a largura máxima para melhor aproveitamento */
+            height: 98vh; /* Ocupa quase a altura total da viewport */
+            margin: 1vh 20px; /* Margem vertical e horizontal */
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 80vh;
         }
 
         /* --- Login Screen --- */
@@ -56,61 +57,70 @@
             text-align: center;
             height: 100%;
             flex-grow: 1;
+            background: linear-gradient(135deg, var(--background-light) 0%, var(--background-dark) 100%); /* Fundo sutil */
         }
 
         #login-screen h1 {
             color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-size: 2.8em; /* Título maior */
+            font-weight: 700;
         }
 
         #login-screen p {
             color: var(--text-muted);
-            margin-bottom: 30px;
-            font-size: 1.1em;
+            margin-bottom: 35px;
+            font-size: 1.2em;
+            max-width: 400px;
         }
 
-        .login-form {
+        .login-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px; /* Espaçamento maior */
             width: 100%;
-            max-width: 350px;
+            max-width: 380px; /* Formulário um pouco mais largo */
         }
 
-        .login-form input[type="password"] {
-            padding: 12px 15px;
+        .social-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 25px; /* Padding maior */
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1em;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .login-form input[type="password"]:focus {
-            border-color: var(--primary-color);
-        }
-
-        .login-form button {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
+            border-radius: 10px; /* Bordas mais arredondadas */
+            font-size: 1.15em;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
         }
 
-        .login-form button:hover {
-            background-color: var(--secondary-color);
+        .social-login-btn img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .social-login-btn.google:hover {
+            background-color: #f0f0f0;
+            border-color: #c5c5c5;
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow-light);
+        }
+        .social-login-btn.microsoft:hover {
+            background-color: #f0f0f0;
+            border-color: #c5c5c5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow-light);
         }
 
-        .login-form .error-message {
-            color: var(--danger); /* Definir --danger no root se não estiver */
-            font-size: 0.9em;
-            margin-top: 5px;
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.95em;
+            margin-top: 10px;
+            font-weight: 600;
         }
 
         /* --- Dashboard Layout --- */
@@ -118,26 +128,59 @@
             display: none; /* Escondido por padrão, mostrado após login */
             flex-direction: column;
             flex-grow: 1;
+            height: 100%; /* Garante que o conteúdo ocupe a altura restante */
+        }
+
+        .top-bar-dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--background-dark);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-dark);
+            font-size: 0.9em;
+        }
+
+        .top-bar-dashboard .user-info {
+            font-weight: 600;
+        }
+
+        .top-bar-dashboard .logout-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-bar-dashboard .logout-btn:hover {
+            background-color: #bd2130;
         }
 
         .tab-nav {
             display: flex;
             background-color: var(--background-dark);
             border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap; /* Permite que as abas quebrem a linha em telas pequenas */
+            flex-wrap: wrap;
+            justify-content: center; /* Centraliza os botões de aba */
         }
 
         .tab-button {
-            padding: 15px 25px;
+            padding: 15px 30px; /* Padding maior para abas */
             border: none;
             background-color: transparent;
             color: var(--text-muted);
-            font-size: 1em;
+            font-size: 1.05em;
             font-weight: 600;
             cursor: pointer;
-            transition: color 0.3s ease, background-color 0.3s ease;
+            transition: color 0.3s ease, background-color 0.3s ease, border-bottom-color 0.3s ease;
             border-bottom: 3px solid transparent;
             flex-grow: 1; /* Faz os botões ocuparem o espaço disponível */
+            max-width: 33.33%; /* Limita a largura para 3 abas */
             text-align: center;
         }
 
@@ -154,63 +197,99 @@
 
         .tab-content {
             flex-grow: 1;
-            padding: 20px;
-            display: none; /* Conteúdo da aba escondido por padrão */
+            padding: 0; /* Remove padding para o iframe ocupar 100% */
+            display: none;
             background-color: var(--card-bg);
-            position: relative; /* Para o iframe */
+            position: relative;
+            height: 100%; /* Garante que a aba ocupe a altura restante */
         }
 
         .tab-content.active {
-            display: block;
+            display: flex; /* Usa flex para o iframe dentro */
+            flex-direction: column;
         }
 
         .powerbi-iframe {
             width: 100%;
             height: 100%;
-            min-height: 600px; /* Altura mínima para o dashboard */
             border: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px var(--shadow-light);
+            border-radius: 0 0 12px 12px; /* Bordas arredondadas apenas na parte inferior */
         }
 
         /* --- Responsividade --- */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .container {
-                margin: 10px;
-                min-height: 95vh;
+                max-width: 95%;
+                margin: 1vh auto;
             }
             #login-screen h1 {
-                font-size: 2em;
+                font-size: 2.2em;
+            }
+            #login-screen p {
+                font-size: 1em;
+            }
+            .tab-button {
+                padding: 12px 20px;
+                font-size: 0.95em;
+                max-width: 50%; /* 2 abas por linha */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                height: 100vh; /* Ocupa a tela toda em mobile */
+            }
+            #login-screen {
+                padding: 30px;
+            }
+            #login-screen h1 {
+                font-size: 1.8em;
             }
             #login-screen p {
                 font-size: 0.9em;
             }
-            .login-form {
+            .login-options {
                 max-width: 90%;
             }
-            .tab-button {
-                padding: 12px 15px;
-                font-size: 0.9em;
+            .tab-nav {
+                flex-direction: column; /* Abas empilhadas em telas menores */
+                justify-content: flex-start;
             }
-            .tab-content {
-                padding: 15px;
+            .tab-button {
+                flex-grow: unset;
+                width: 100%;
+                max-width: 100%; /* Ocupa a largura total */
+                border-bottom: 1px solid var(--border-color);
+            }
+            .tab-button.active {
+                border-bottom: 3px solid var(--primary-color);
             }
             .powerbi-iframe {
-                min-height: 400px; /* Ajuste para telas menores */
+                border-radius: 0; /* Remove arredondamento em tela cheia */
+            }
+            .top-bar-dashboard {
+                flex-direction: column;
+                gap: 5px;
+                padding: 8px 15px;
             }
         }
 
         @media (max-width: 480px) {
-            .tab-nav {
-                flex-direction: column; /* Abas empilhadas em telas muito pequenas */
+            #login-screen h1 {
+                font-size: 1.5em;
             }
-            .tab-button {
-                flex-grow: unset; /* Desativa o flex-grow para empilhar */
-                width: 100%;
-                border-bottom: 1px solid var(--border-color); /* Borda entre abas empilhadas */
+            #login-screen p {
+                font-size: 0.85em;
             }
-            .tab-button.active {
-                border-bottom: 3px solid var(--primary-color); /* Mantém a borda ativa */
+            .social-login-btn {
+                padding: 10px 15px;
+                font-size: 1em;
+            }
+            .social-login-btn img {
+                width: 20px;
+                height: 20px;
             }
         }
     </style>
@@ -220,20 +299,28 @@
         <!-- Tela de Login -->
         <div id="login-screen">
             <h1>Bem-vindo ao Portal de Dashboards</h1>
-            <p>Por favor, insira a senha para acessar os relatórios.</p>
-            <form class="login-form" id="login-form">
-                <input type="password" id="password-input" placeholder="Digite a senha" required>
-                <button type="submit">Acessar Dashboards</button>
-                <div class="error-message" id="login-error"></div>
-            </form>
+            <p>Faça login para acessar os relatórios de Power BI.</p>
+            <div class="login-options">
+                <button id="google-login-btn" class="social-login-btn google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Entrar com Google
+                </button>
+                <button id="microsoft-login-btn" class="social-login-btn microsoft">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/microsoft.svg" alt="Microsoft"> Entrar com Microsoft
+                </button>
+            </div>
+            <div class="error-message" id="login-error"></div>
         </div>
 
         <!-- Conteúdo dos Dashboards (escondido por padrão) -->
         <div id="dashboard-content">
+            <div class="top-bar-dashboard">
+                <span class="user-info" id="user-display"></span>
+                <button class="logout-btn" id="logout-btn">Sair</button>
+            </div>
             <div class="tab-nav">
-                <button class="tab-button active" data-tab="tab1">Visão Geral de Vendas</button>
-                <button class="tab-button" data-tab="tab2">Detalhes de Vendas</button>
-                <button class="tab-button" data-tab="tab3">Performance de Vendas</button>
+                <button class="tab-button active" data-tab="tab1">Power BI HM</button>
+                <button class="tab-button" data-tab="tab2">Navegação</button>
+                <button class="tab-button" data-tab="tab3">Desospitalização</button>
             </div>
 
             <div id="tab1" class="tab-content active">
@@ -248,29 +335,95 @@
         </div>
     </div>
 
-    <script>
-        const CORRECT_PASSWORD = "12345"; // A senha para acesso
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, MicrosoftAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA4jBESngH1HO22EUKEIFwFEah5Pa-zmyM",
+            authDomain: "bi-enfermaria.firebaseapp.com",
+            projectId: "bi-enfermaria",
+            storageBucket: "bi-enfermaria.firebasestorage.app",
+            messagingSenderId: "823708969267",
+            appId: "1:823708969267:web:01f22099b87f9747ddb646",
+            measurementId: "G-1E87M5CPJE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); // Obter a instância de autenticação
+
+        // Provedores de Autenticação
+        const googleProvider = new GoogleAuthProvider();
+        const microsoftProvider = new MicrosoftAuthProvider();
+        // Você pode adicionar scopes específicos se precisar de mais informações do usuário
+        // microsoftProvider.addScope('user.read'); 
 
         document.addEventListener('DOMContentLoaded', () => {
             const loginScreen = document.getElementById('login-screen');
             const dashboardContent = document.getElementById('dashboard-content');
-            const loginForm = document.getElementById('login-form');
-            const passwordInput = document.getElementById('password-input');
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            const microsoftLoginBtn = document.getElementById('microsoft-login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
             const loginError = document.getElementById('login-error');
+            const userDisplay = document.getElementById('user-display');
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
 
-            // --- Lógica de Login ---
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if (passwordInput.value === CORRECT_PASSWORD) {
+            // --- Funções de Login ---
+            const handleLogin = async (provider) => {
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    // O usuário está logado, onAuthStateChanged vai lidar com a UI
+                    console.log("Login bem-sucedido:", result.user.displayName || result.user.email);
+                    loginError.textContent = ''; // Limpa mensagens de erro
+                } catch (error) {
+                    console.error("Erro de login:", error);
+                    let errorMessage = "Ocorreu um erro desconhecido.";
+                    if (error.code === 'auth/popup-closed-by-user') {
+                        errorMessage = "Login cancelado pelo usuário.";
+                    } else if (error.code === 'auth/cancelled-popup-request') {
+                        errorMessage = "Requisição de popup cancelada. Tente novamente.";
+                    } else if (error.code === 'auth/account-exists-with-different-credential') {
+                        errorMessage = "Já existe uma conta com o mesmo e-mail, mas com outro provedor de login.";
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    loginError.textContent = `Erro: ${errorMessage}`;
+                }
+            };
+
+            googleLoginBtn.addEventListener('click', () => handleLogin(googleProvider));
+            microsoftLoginBtn.addEventListener('click', () => handleLogin(microsoftProvider));
+
+            // --- Função de Logout ---
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    // O usuário está deslogado, onAuthStateChanged vai lidar com a UI
+                    console.log("Usuário deslogado.");
+                } catch (error) {
+                    console.error("Erro ao deslogar:", error);
+                    alert("Erro ao deslogar: " + error.message);
+                }
+            });
+
+            // --- Monitorar Estado de Autenticação ---
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // Usuário está logado
                     loginScreen.style.display = 'none';
-                    dashboardContent.style.display = 'flex'; // Mostra o conteúdo do dashboard
-                    loginError.textContent = ''; // Limpa qualquer mensagem de erro
-                    activateTab('tab1'); // Ativa a primeira aba por padrão após o login
+                    dashboardContent.style.display = 'flex';
+                    userDisplay.textContent = `Olá, ${user.displayName || user.email}`;
+                    activateTab('tab1'); // Ativa a primeira aba após o login
                 } else {
-                    loginError.textContent = 'Senha incorreta. Tente novamente.';
-                    passwordInput.value = ''; // Limpa o campo da senha
+                    // Usuário está deslogado
+                    loginScreen.style.display = 'flex';
+                    dashboardContent.style.display = 'none';
+                    userDisplay.textContent = ''; // Limpa o nome do usuário
+                    loginError.textContent = ''; // Limpa mensagens de erro
                 }
             });
 
@@ -291,7 +444,6 @@
 
             // Função para ativar uma aba específica (usada após o login)
             function activateTab(tabId) {
-                // Encontra o botão correspondente e simula um clique
                 const buttonToActivate = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
                 if (buttonToActivate) {
                     buttonToActivate.click();
