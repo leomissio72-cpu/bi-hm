@@ -1,446 +1,760 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Dashboards Power BI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #007bff; /* Azul primário profissional */
-            --secondary-color: #0056b3; /* Azul mais escuro para hover/active */
-            --background-light: #f8f9fa; /* Fundo muito claro */
-            --background-dark: #e9ecef; /* Fundo um pouco mais escuro para nav */
-            --text-dark: #343a40; /* Texto escuro padrão */
-            --text-muted: #6c757d; /* Texto cinza sutil */
-            --border-color: #dee2e6; /* Cor da borda */
-            --card-bg: #ffffff; /* Fundo dos cartões/conteúdo */
-            --danger-color: #dc3545; /* Cor para mensagens de erro */
-            --shadow-light: rgba(0, 0, 0, 0.08);
-            --shadow-medium: rgba(0, 0, 0, 0.15);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Imobiliário</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --sidebar: #1a1f2e;
+      --card: #ffffff;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --accent: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: #0f172a;
+    }
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-light);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
-            overflow-x: hidden; /* Evita scroll horizontal indesejado */
-        }
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      padding: 20px;
+      background: var(--sidebar);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transition: width 0.3s;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .brand-text h3 {
+      font-size: 16px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand-text small {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      font-weight: 600;
+      text-align: left;
+      width: 100%;
+      min-height: 48px;
+      transition: background 0.2s, color 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-btn .material-icons {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .nav-btn .label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .nav-btn.active {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        .container {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px var(--shadow-medium); /* Sombra mais pronunciada */
-            width: 100%;
-            max-width: 1300px; /* Aumenta a largura máxima para melhor aproveitamento */
-            height: 98vh; /* Ocupa quase a altura total da viewport */
-            margin: 1vh 20px; /* Margem vertical e horizontal */
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    /* WORKSPACE */
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .topbar {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: var(--card);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .main-area {
+      padding: 24px;
+      overflow: auto;
+    }
+    .container {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin: 0 0 16px 0;
+      color: #0f172a;
+      font-size: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .col-full {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      background: #fff;
+      color: #0f172a;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      color: #0f172a;
+    }
+    .btn.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn.success {
+      background: var(--success);
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.03);
+    }
+    td .btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    .no-data {
+      color: var(--muted);
+      padding: 40px;
+      text-align: center;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .alert.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+    .alert.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-disponivel { background: #d1fae5; color: #065f46; }
+    .status-alugado { background: #dbeafe; color: #1e40af; }
+    .status-vendido { background: #fce7f3; color: #9f1239; }
+    .status-reservado { background: #fef3c7; color: #92400e; }
 
-        /* --- Login Screen --- */
-        #login-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            text-align: center;
-            height: 100%;
-            flex-grow: 1;
-            background: linear-gradient(135deg, var(--background-light) 0%, var(--background-dark) 100%); /* Fundo sutil */
-        }
+    .card-imovel {
+      background: #fff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    .card-imovel:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    .card-imovel h3 {
+      margin: 0 0 8px 0;
+      color: #0f172a;
+      font-size: 16px;
+    }
+    .card-imovel p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .card-imovel .price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 8px 0;
+    }
 
-        #login-screen h1 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 2.8em; /* Título maior */
-            font-weight: 700;
-        }
+    /* UPLOAD DE FOTOS NO CADASTRO */
+    .upload-box {
+      border: 2px dashed rgba(15, 23, 42, 0.2);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(59, 130, 246, 0.02);
+      cursor: pointer;
+      transition: all 0.3s;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .upload-box.dragover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .preview-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid rgba(15, 23, 42, 0.08);
+      aspect-ratio: 1;
+    }
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .preview-item .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+    .preview-item .remove-btn:hover {
+      opacity: 1;
+    }
 
-        #login-screen p {
-            color: var(--text-muted);
-            margin-bottom: 35px;
-            font-size: 1.2em;
-            max-width: 400px;
-        }
+    /* GALERIA DE FOTOS */
+    .upload-area {
+      border: 2px dashed rgba(15, 23, 42, 0.2);
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      background: rgba(59, 130, 246, 0.02);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.05);
+    }
+    .upload-area.dragover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .photo-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .photo-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    .photo-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-info {
+      padding: 12px;
+    }
+    .photo-info .price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .photo-info .description {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .photo-actions {
+      display: flex;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+    .photo-actions .btn {
+      flex: 1;
+      justify-content: center;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: rgba(15, 23, 42, 0.05);
+      color: #0f172a;
+    }
+    .modal img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
 
-        .login-options {
-            display: flex;
-            flex-direction: column;
-            gap: 18px; /* Espaçamento maior */
-            width: 100%;
-            max-width: 380px; /* Formulário um pouco mais largo */
-        }
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+        padding: 16px 8px;
+      }
+      .brand-text, .sidebar-footer, .nav-btn .label {
+        display: none;
+      }
+      .nav-btn {
+        justify-content: center;
+        padding: 12px 8px;
+        gap: 0;
+      }
+      .brand {
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+      .logo {
+        margin: 0 auto;
+      }
+      .topbar {
+        padding: 0 16px;
+      }
+      .page-title {
+        font-size: 16px;
+      }
+      .user-info {
+        display: none;
+      }
+      .main-area {
+        padding: 16px;
+      }
+      .container {
+        padding: 16px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      table {
+        font-size: 12px;
+      }
+      th, td {
+        padding: 8px;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      .upload-area, .upload-box {
+        padding: 30px 20px;
+      }
+      .preview-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+    }
 
-        .social-login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 25px; /* Padding maior */
-            border: 1px solid var(--border-color);
-            border-radius: 10px; /* Bordas mais arredondadas */
-            font-size: 1.15em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
-            background-color: var(--card-bg);
-            color: var(--text-dark);
-        }
+    @media (max-width: 480px) {
+      .actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-content {
+        padding: 16px;
+      }
+    }
 
-        .social-login-btn img {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-        .social-login-btn.google:hover {
-            background-color: #f0f0f0;
-            border-color: #c5c5c5;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px var(--shadow-light);
-        }
-        /* Removido .social-login-btn.microsoft:hover */
-
-        .error-message {
-            color: var(--danger-color);
-            font-size: 0.95em;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
-        /* --- Dashboard Layout --- */
-        #dashboard-content {
-            display: none; /* Escondido por padrão, mostrado após login */
-            flex-direction: column;
-            flex-grow: 1;
-            height: 100%; /* Garante que o conteúdo ocupe a altura restante */
-        }
-
-        .top-bar-dashboard {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: var(--background-dark);
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-dark);
-            font-size: 0.9em;
-        }
-
-        .top-bar-dashboard .user-info {
-            font-weight: 600;
-        }
-
-        .top-bar-dashboard .logout-btn {
-            background-color: var(--danger-color);
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s ease;
-        }
-
-        .top-bar-dashboard .logout-btn:hover {
-            background-color: #bd2130;
-        }
-
-        .tab-nav {
-            display: flex;
-            background-color: var(--background-dark);
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-            justify-content: center; /* Centraliza os botões de aba */
-        }
-
-        .tab-button {
-            padding: 15px 30px; /* Padding maior para abas */
-            border: none;
-            background-color: transparent;
-            color: var(--text-muted);
-            font-size: 1.05em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: color 0.3s ease, background-color 0.3s ease, border-bottom-color 0.3s ease;
-            border-bottom: 3px solid transparent;
-            flex-grow: 1; /* Faz os botões ocuparem o espaço disponível */
-            max-width: 33.33%; /* Limita a largura para 3 abas */
-            text-align: center;
-        }
-
-        .tab-button:hover {
-            color: var(--primary-color);
-            background-color: var(--background-light);
-        }
-
-        .tab-button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background-color: var(--card-bg);
-        }
-
-        .tab-content {
-            flex-grow: 1;
-            padding: 0; /* Remove padding para o iframe ocupar 100% */
-            display: none;
-            background-color: var(--card-bg);
-            position: relative;
-            height: 100%; /* Garante que a aba ocupe a altura restante */
-        }
-
-        .tab-content.active {
-            display: flex; /* Usa flex para o iframe dentro */
-            flex-direction: column;
-        }
-
-        .powerbi-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 0 0 12px 12px; /* Bordas arredondadas apenas na parte inferior */
-        }
-
-        /* --- Responsividade --- */
-        @media (max-width: 992px) {
-            .container {
-                max-width: 95%;
-                margin: 1vh auto;
-            }
-            #login-screen h1 {
-                font-size: 2.2em;
-            }
-            #login-screen p {
-                font-size: 1em;
-            }
-            .tab-button {
-                padding: 12px 20px;
-                font-size: 0.95em;
-                max-width: 50%; /* 2 abas por linha */
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                height: 100vh; /* Ocupa a tela toda em mobile */
-            }
-            #login-screen {
-                padding: 30px;
-            }
-            #login-screen h1 {
-                font-size: 1.8em;
-            }
-            #login-screen p {
-                font-size: 0.9em;
-            }
-            .login-options {
-                max-width: 90%;
-            }
-            .tab-nav {
-                flex-direction: column; /* Abas empilhadas em telas menores */
-                justify-content: flex-start;
-            }
-            .tab-button {
-                flex-grow: unset;
-                width: 100%;
-                max-width: 100%; /* Ocupa a largura total */
-                border-bottom: 1px solid var(--border-color);
-            }
-            .tab-button.active {
-                border-bottom: 3px solid var(--primary-color);
-            }
-            .powerbi-iframe {
-                border-radius: 0; /* Remove arredondamento em tela cheia */
-            }
-            .top-bar-dashboard {
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #login-screen h1 {
-                font-size: 1.5em;
-            }
-            #login-screen p {
-                font-size: 0.85em;
-            }
-            .social-login-btn {
-                padding: 10px 15px;
-                font-size: 1em;
-            }
-            .social-login-btn img {
-                width: 20px;
-                height: 20px;
-            }
-        }
-    </style>
+    /* Esconde todas as abas por padrão */
+    .tab {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Tela de Login -->
-        <div id="login-screen">
-            <h1>Bem-vindo ao Portal de Dashboards</h1>
-            <p>Faça login com sua conta Google para acessar os relatórios de Power BI.</p>
-            <div class="login-options">
-                <button id="google-login-btn" class="social-login-btn google">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Entrar com Google
-                </button>
-                <!-- Botão Microsoft removido -->
-            </div>
-            <div class="error-message" id="login-error"></div>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">🏠</div>
+        <div class="brand-text">
+          <h3>Imobiliária Pro</h3>
+          <small>Sistema de Gestão</small>
         </div>
-
-        <!-- Conteúdo dos Dashboards (escondido por padrão) -->
-        <div id="dashboard-content">
-            <div class="top-bar-dashboard">
-                <span class="user-info" id="user-display"></span>
-                <button class="logout-btn" id="logout-btn">Sair</button>
-            </div>
-            <div class="tab-nav">
-                <button class="tab-button active" data-tab="tab1">Power BI HM</button>
-                <button class="tab-button" data-tab="tab2">Navegação</button>
-                <button class="tab-button" data-tab="tab3">Desospitalização</button>
-            </div>
-
-            <div id="tab1" class="tab-content active">
-                <iframe class="powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMTBjZTE1ZGYtYmU4Ny00OGVkLTkzMDQtM2UzNjhkMTczZmUxIiwidCI6Ijc0MmYyNGViLWYyOWMtNDQwMS04NGU1LTYxN2Q3MzQ0YjViNyJ9" allowFullScreen="true"></iframe>
-            </div>
-            <div id="tab2" class="tab-content">
-                <iframe class="powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMjBhZDdjMDctYzBmOS00YjMyLThiZDYtNDczN2FkZjhjYzA3IiwidCI6Ijc0MmYyNGViLWYyOWMtNDQwMS04NGU1LTYxN2Q3MzQ0YjViNyJ9" allowFullScreen="true"></iframe>
-            </div>
-            <div id="tab3" class="tab-content">
-                <iframe class="powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMWE3MzQ4YjEtMTNiOS00MDY0LTgxNzYtMjIyYjRmNGI4M2ZiIiwidCI6Ijc0MmYyNGViLWYyOWMtNDQwMS04NGU1LTYxN2Q3MzQ0YjViNyJ9" allowFullScreen="true"></iframe>
-            </div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-tab="cadastro">
+          <span class="material-icons">add_home</span>
+          <span class="label">Cadastro</span>
+        </button>
+        <button class="nav-btn" data-tab="imoveis">
+          <span class="material-icons">home_work</span>
+          <span class="label">Imóveis</span>
+        </button>
+        <button class="nav-btn" data-tab="galeria">
+          <span class="material-icons">photo_library</span>
+          <span class="label">Galeria</span>
+        </button>
+        <button class="nav-btn" data-tab="clientes">
+          <span class="material-icons">people</span>
+          <span class="label">Clientes</span>
+        </button>
+        <button class="nav-btn" data-tab="visitas">
+          <span class="material-icons">event</span>
+          <span class="label">Visitas</span>
+        </button>
+        <button class="nav-btn" data-tab="ferramentas">
+          <span class="material-icons">calculate</span>
+          <span class="label">Ferramentas</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div style="font-size:12px;margin-top:8px">
+          <strong>Armazenamento:</strong> Local
         </div>
-    </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px">
+          Dados salvos no navegador
+        </div>
+      </div>
+    </aside>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+    <!-- WORKSPACE -->
+    <div class="workspace">
+      <div class="topbar">
+        <div class="page-title" id="pageTitle">Cadastro de Imóvel</div>
+        <div class="user-area">
+          <div class="user-info" style="text-align:right">
+            <div style="font-weight:700;font-size:14px">Sistema Local</div>
+            <div style="font-size:12px;color:var(--muted)">Gestão Imobiliária</div>
+          </div>
+          <div class="avatar">🏢</div>
+        </div>
+      </div>
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA4jBESngH1HO22EUKEIFwFEah5Pa-zmyM",
-            authDomain: "bi-enfermaria.firebaseapp.com",
-            projectId: "bi-enfermaria",
-            storageBucket: "bi-enfermaria.firebasestorage.app",
-            messagingSenderId: "823708969267",
-            appId: "1:823708969267:web:01f22099b87f9747ddb646",
-            measurementId: "G-1E87M5CPJE"
-        };
+      <main class="main-area">
+        <!-- CADASTRO -->
+        <section id="cadastro" class="container tab" style="display:block">
+          <h2>Cadastro de Imóvel</h2>
+          <div id="alertCadastro"></div>
+          <form id="formCadastro">
+            <div class="grid">
+              <div>
+                <label>Tipo de Imóvel *</label>
+                <select name="tipo" required>
+                  <option value="">Selecione...</option>
+                  <option value="Casa">Casa</option>
+                  <option value="Apartamento">Apartamento</option>
+                  <option value="Terreno">Terreno</option>
+                  <option value="Comercial">Comercial</option>
+                  <option value="Rural">Rural</option>
+                  <option value="Galpão">Galpão</option>
+                  <option value="Cobertura">Cobertura</option>
+                </select>
+              </div>
+              <div>
+                <label>Finalidade *</label>
+                <select name="finalidade" required>
+                  <option value="Venda">Venda</option>
+                  <option value="Aluguel">Aluguel</option>
+                  <option value="Venda/Aluguel">Venda/Aluguel</option>
+                </select>
+              </div>
+              <div class="col-full">
+                <label>Endereço Completo *</label>
+                <input name="endereco" type="text" required placeholder="Rua, nº, bairro, cidade - UF">
+              </div>
+              <div>
+                <label>CEP</label>
+                <input name="cep" type="text" placeholder="00000-000">
+              </div>
+              <div>
+                <label>Área (m²)</label>
+                <input name="area" type="number" step="0.01" placeholder="Ex: 120.50">
+              </div>
+              <div>
+                <label>Quartos</label>
+                <input name="quartos" type="number" min="0" placeholder="Ex: 3">
+              </div>
+              <div>
+                <label>Banheiros</label>
+                <input name="banheiros" type="number" min="0" placeholder="Ex: 2">
+              </div>
+              <div>
+                <label>Vagas de Garagem</label>
+                <input name="vagas" type="number" min="0" placeholder="Ex: 2">
+              </div>
+              <div>
+                <label>Valor (R$) *</label>
+                <input name="valor" type="number" step="0.01" required placeholder="0.00">
+              </div>
+              <div>
+                <label>Condomínio (R$)</label>
+                <input name="condominio" type="number" step="0.01" placeholder="0.00">
+              </div>
+              <div>
+                <label>IPTU (R$)</label>
+                <input name="iptu" type="number" step="0.01" placeholder="0.00">
+              </div>
+              <div>
+                <label>Status *</label>
+                <select name="status" required>
+                  <option value="Disponível">Disponível</option>
+                  <option value="Alugado">Alugado</option>
+                  <option value="Vendido">Vendido</option>
+                  <option value="Reservado">Reservado</option>
+                </select>
+              </div>
+              <div>
+                <label>Proprietário</label>
+                <input name="proprietario" type="text" placeholder="Nome do proprietário">
+              </div>
+              <div class="col-full">
+                <label>Características / Observações</label>
+                <textarea name="observacoes" placeholder="Ex: Piscina, churrasqueira, armários embutidos, etc."></textarea>
+              </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app); // Obter a instância de autenticação
+              <!-- UPLOAD DE FOTOS NO CADASTRO -->
+              <div class="col-full">
+                <label>Fotos do Imóvel</label>
+                <div class="upload-box" id="uploadBoxCadastro">
+                  <span class="material-icons" style="font-size:48px;color:var(--primary);margin-bottom:12px">add_photo_alternate</span>
+                  <p style="font-size:16px;font-weight:600;margin-bottom:8px;Perfeito, Leonardo! Vou te entregar o HTML completo do sistema imobiliário com **todos os botões de navegação funcionando perfeitamente**.
 
-        // Provedor de Autenticação Google
-        const googleProvider = new GoogleAuthProvider();
-        // Provedor Microsoft removido
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginScreen = document.getElementById('login-screen');
-            const dashboardContent = document.getElementById('dashboard-content');
-            const googleLoginBtn = document.getElementById('google-login-btn');
-            // const microsoftLoginBtn = document.getElementById('microsoft-login-btn'); // Removido
-            const logoutBtn = document.getElementById('logout-btn');
-            const loginError = document.getElementById('login-error');
-            const userDisplay = document.getElementById('user-display');
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            // --- Função de Login ---
-            const handleLogin = async (provider) => {
-                try {
-                    const result = await signInWithPopup(auth, provider);
-                    // O usuário está logado, onAuthStateChanged vai lidar com a UI
-                    console.log("Login bem-sucedido:", result.user.displayName || result.user.email);
-                    loginError.textContent = ''; // Limpa mensagens de erro
-                } catch (error) {
-                    console.error("Erro de login:", error);
-                    let errorMessage = "Ocorreu um erro desconhecido.";
-                    if (error.code === 'auth/popup-closed-by-user') {
-                        errorMessage = "Login cancelado pelo usuário.";
-                    } else if (error.code === 'auth/cancelled-popup-request') {
-                        errorMessage = "Requisição de popup cancelada. Tente novamente.";
-                    } else if (error.code === 'auth/account-exists-with-different-credential') {
-                        errorMessage = "Já existe uma conta com o mesmo e-mail, mas com outro provedor de login.";
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    loginError.textContent = `Erro: ${errorMessage}`;
-                }
-            };
-
-            googleLoginBtn.addEventListener('click', () => handleLogin(googleProvider));
-            // microsoftLoginBtn.addEventListener('click', () => handleLogin(microsoftProvider)); // Removido
-
-            // --- Função de Logout ---
-            logoutBtn.addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    // O usuário está deslogado, onAuthStateChanged vai lidar com a UI
-                    console.log("Usuário deslogado.");
-                } catch (error) {
-                    console.error("Erro ao deslogar:", error);
-                    alert("Erro ao deslogar: " + error.message);
-                }
-            });
-
-            // --- Monitorar Estado de Autenticação ---
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // Usuário está logado
-                    loginScreen.style.display = 'none';
-                    dashboardContent.style.display = 'flex';
-                    userDisplay.textContent = `Olá, ${user.displayName || user.email}`;
-                    activateTab('tab1'); // Ativa a primeira aba após o login
-                } else {
-                    // Usuário está deslogado
-                    loginScreen.style.display = 'flex';
-                    dashboardContent.style.display = 'none';
-                    userDisplay.textContent = ''; // Limpa o nome do usuário
-                    loginError.textContent = ''; // Limpa mensagens de erro
-                }
-            });
-
-            // --- Lógica de Navegação por Abas ---
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTab = button.dataset.tab;
-
-                    // Desativa todos os botões e conteúdos
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-
-                    // Ativa o botão e o conteúdo da aba clicada
-                    button.classList.add('active');
-                    document.getElementById(targetTab).classList.add('active');
-                });
-            });
-
-            // Função para ativar uma aba específica (usada após o login)
-            function activateTab(tabId) {
-                const buttonToActivate = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
-                if (buttonToActivate) {
-                    buttonToActivate.click();
-                }
-            }
-        });
-    </script>
-</body>
-</html>
