@@ -3,48 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Dashboards Power BI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+    <title>Portal Executivo - Dashboards Power BI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --bg: #f4f6fb;
-            --sidebar: #1a1f2e;
-            --card: #ffffff;
-            --muted: #64748b;
-            --primary: #3b82f6;
-            --accent: #2563eb;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #06b6d4;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --shadow-light: rgba(0, 0, 0, 0.08);
-            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+            --shadow-card: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: #0f172a;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #1e1b4b 100%);
+            color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Effects */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+            z-index: -1;
         }
 
         .container {
-            background-color: var(--card);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px var(--shadow-medium);
-            width: 100%;
-            max-width: 1400px;
-            height: 98vh;
-            margin: 1vh 20px;
-            overflow: hidden;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -57,24 +71,80 @@
             align-items: center;
             padding: 40px;
             text-align: center;
-            height: 100%;
-            flex-grow: 1;
-            background: linear-gradient(135deg, var(--bg) 0%, #e9ecef 100%);
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-icon .material-icons {
+            font-size: 32px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         #login-screen h1 {
-            color: var(--primary);
+            font-size: 2.5rem;
             margin-bottom: 15px;
-            font-size: 2.8em;
             font-weight: 700;
+            background: linear-gradient(90deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         #login-screen p {
-            color: var(--muted);
+            color: var(--text-secondary);
             margin-bottom: 35px;
-            font-size: 1.2em;
-            max-width: 450px;
-            line-height: 1.5;
+            font-size: 1.1rem;
+            line-height: 1.6;
         }
 
         .login-options {
@@ -82,138 +152,194 @@
             flex-direction: column;
             gap: 18px;
             width: 100%;
-            max-width: 380px;
         }
 
         .social-login-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 14px 25px;
-            border: 1px solid rgba(15, 23, 42, 0.1);
-            border-radius: 10px;
-            font-size: 1.15em;
+            padding: 16px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            background-color: var(--card);
-            color: #0f172a;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .social-login-btn:hover::before {
+            left: 100%;
+        }
+
+        .social-login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .social-login-btn img {
             width: 24px;
             height: 24px;
-            margin-right: 10px;
-        }
-
-        .social-login-btn.google:hover {
-            background-color: #f8f9fa;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px var(--shadow-light);
+            margin-right: 12px;
         }
 
         .error-message {
             color: var(--danger);
-            font-size: 0.95em;
-            margin-top: 10px;
+            font-size: 0.95rem;
+            margin-top: 15px;
             font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         /* --- DASHBOARD LAYOUT --- */
         #dashboard-content {
             display: none;
             flex-direction: column;
-            flex-grow: 1;
-            height: 100%;
+            min-height: 100vh;
         }
 
         .top-bar-dashboard {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 24px;
-            background-color: var(--sidebar);
+            padding: 15px 30px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dashboard-title .material-icons {
+            color: var(--accent-primary);
+            font-size: 28px;
+        }
+
+        .dashboard-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .top-bar-dashboard .user-info {
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .top-bar-dashboard .user-info .material-icons {
-            font-size: 20px;
-            color: var(--primary);
+            font-size: 22px;
+            color: var(--accent-primary);
         }
 
         .top-bar-dashboard .logout-btn {
-            background-color: var(--danger);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.95rem;
             font-weight: 600;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-family: 'Inter', sans-serif;
+            box-shadow: var(--shadow-glow);
         }
 
         .top-bar-dashboard .logout-btn:hover {
-            background-color: #bd2130;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
         }
 
         .tab-nav {
             display: flex;
-            background-color: #e9ecef;
-            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-            flex-wrap: wrap;
-            justify-content: center;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0 30px;
         }
 
         .tab-button {
-            padding: 16px 32px;
+            padding: 18px 30px;
             border: none;
-            background-color: transparent;
-            color: var(--muted);
-            font-size: 1.05em;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            flex-grow: 1;
-            max-width: 33.33%;
-            text-align: center;
+            position: relative;
             font-family: 'Inter', sans-serif;
         }
 
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
         .tab-button:hover {
-            color: var(--primary);
-            background-color: rgba(59, 130, 246, 0.05);
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .tab-button.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            background-color: var(--card);
+            color: var(--text-primary);
+        }
+
+        .tab-button.active::after {
+            width: 100%;
         }
 
         .tab-content {
             flex-grow: 1;
             padding: 0;
             display: none;
-            background-color: var(--card);
+            background: var(--bg-secondary);
             position: relative;
             height: 100%;
         }
@@ -227,83 +353,115 @@
             width: 100%;
             height: 100%;
             border: none;
-            border-radius: 0 0 12px 12px;
+            background: white;
+        }
+
+        .dashboard-footer {
+            padding: 15px 30px;
+            background: rgba(15, 23, 42, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         /* --- RESPONSIVIDADE --- */
+        @media (max-width: 1200px) {
+            .tab-nav {
+                padding: 0 20px;
+            }
+            
+            .tab-button {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+        }
+
         @media (max-width: 992px) {
             .container {
-                max-width: 95%;
-                margin: 1vh auto;
+                padding: 0 15px;
             }
+            
             #login-screen h1 {
-                font-size: 2.2em;
+                font-size: 2.2rem;
             }
+            
             #login-screen p {
-                font-size: 1em;
+                font-size: 1rem;
             }
-            .tab-button {
+            
+            .login-card {
+                padding: 40px 30px;
+            }
+            
+            .top-bar-dashboard {
                 padding: 12px 20px;
-                font-size: 0.95em;
-                max-width: 50%;
+            }
+            
+            .tab-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tab-button {
+                flex: 1;
+                min-width: 33.33%;
+                text-align: center;
             }
         }
 
         @media (max-width: 768px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                height: 100vh;
-            }
             #login-screen {
-                padding: 30px;
+                padding: 20px;
             }
+            
             #login-screen h1 {
-                font-size: 1.8em;
+                font-size: 1.8rem;
             }
-            #login-screen p {
-                font-size: 0.9em;
-            }
-            .login-options {
-                max-width: 90%;
-            }
-            .tab-nav {
+            
+            .logo {
                 flex-direction: column;
-                justify-content: flex-start;
+                gap: 10px;
             }
-            .tab-button {
-                flex-grow: unset;
-                width: 100%;
-                max-width: 100%;
-                border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+            
+            .logo-text {
+                font-size: 24px;
             }
-            .tab-button.active {
-                border-bottom: 3px solid var(--primary);
-            }
-            .powerbi-iframe {
-                border-radius: 0;
-            }
+            
             .top-bar-dashboard {
                 flex-direction: column;
-                gap: 8px;
-                padding: 10px 15px;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .tab-nav {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                width: 100%;
+                min-width: 100%;
             }
         }
 
         @media (max-width: 480px) {
             #login-screen h1 {
-                font-size: 1.5em;
+                font-size: 1.6rem;
             }
-            #login-screen p {
-                font-size: 0.85em;
+            
+            .login-card {
+                padding: 30px 20px;
             }
+            
             .social-login-btn {
-                padding: 10px 15px;
-                font-size: 1em;
+                padding: 14px 20px;
+                font-size: 1rem;
             }
-            .social-login-btn img {
-                width: 20px;
-                height: 20px;
+            
+            .top-bar-dashboard .user-info {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
             }
         }
     </style>
@@ -312,33 +470,45 @@
     <div class="container">
         <!-- Tela de Login -->
         <div id="login-screen">
-            <h1>Portal de Dashboards</h1>
-            <p>Faça login com sua conta Google para acessar os relatórios de Power BI com segurança.</p>
-            <div class="login-options">
-                <button id="google-login-btn" class="social-login-btn google">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> 
-                    Entrar com Google
-                </button>
+            <div class="login-card">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <span class="material-icons">insights</span>
+                    </div>
+                    <div class="logo-text">Executive BI</div>
+                </div>
+                <h1>Portal Executivo de Business Intelligence</h1>
+                <p>Acesso seguro aos dashboards estratégicos da organização. Faça login para visualizar relatórios em tempo real.</p>
+                <div class="login-options">
+                    <button id="google-login-btn" class="social-login-btn google">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> 
+                        Entrar com Google Corporativo
+                    </button>
+                </div>
+                <div class="error-message" id="login-error"></div>
             </div>
-            <div class="error-message" id="login-error"></div>
         </div>
 
         <!-- Conteúdo dos Dashboards (escondido por padrão) -->
         <div id="dashboard-content">
             <div class="top-bar-dashboard">
-                <span class="user-info">
+                <div class="dashboard-title">
+                    <span class="material-icons">dashboard</span>
+                    <h2>Executive Dashboard Portal</h2>
+                </div>
+                <div class="user-info">
                     <span class="material-icons">account_circle</span>
                     <span id="user-display"></span>
-                </span>
+                </div>
                 <button class="logout-btn" id="logout-btn">
                     <span class="material-icons" style="font-size:18px">logout</span>
                     Sair
                 </button>
             </div>
             <div class="tab-nav">
-                <button class="tab-button active" data-tab="tab1">Power BI HM</button>
+                <button class="tab-button active" data-tab="tab1">Indicadores Hospitalares</button>
                 <button class="tab-button" data-tab="tab2">Desospitalização</button>
-                <button class="tab-button" data-tab="tab3">Navegação</button>
+                <button class="tab-button" data-tab="tab3">Navegação de Pacientes</button>
             </div>
 
             <div id="tab1" class="tab-content active">
@@ -349,6 +519,10 @@
             </div>
             <div id="tab3" class="tab-content">
                 <iframe class="powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMWE3MzQ4YjEtMTNiOS00MDY0LTgxNzYtMjIyYjRmNGI4M2ZiIiwidCI6Ijc0MmYyNGViLWYyOWMtNDQwMS04NGU1LTYxN2Q3MzQ0YjViNyJ9" allowFullScreen="true"></iframe>
+            </div>
+            
+            <div class="dashboard-footer">
+                &copy; 2023 Executive BI Portal - Dashboard Corporativo
             </div>
         </div>
     </div>
